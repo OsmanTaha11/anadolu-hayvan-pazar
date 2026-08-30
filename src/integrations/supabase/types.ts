@@ -14,16 +14,272 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      escrow_orders: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          deposit_amount: number
+          id: string
+          listing_id: string
+          seller_id: string | null
+          status: Database["public"]["Enums"]["escrow_status"]
+          total_amount: number
+          virtual_iban: string | null
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          deposit_amount: number
+          id?: string
+          listing_id: string
+          seller_id?: string | null
+          status?: Database["public"]["Enums"]["escrow_status"]
+          total_amount: number
+          virtual_iban?: string | null
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          deposit_amount?: number
+          id?: string
+          listing_id?: string
+          seller_id?: string | null
+          status?: Database["public"]["Enums"]["escrow_status"]
+          total_amount?: number
+          virtual_iban?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "escrow_orders_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      listings: {
+        Row: {
+          age_months: number | null
+          birth_date: string | null
+          breed: string
+          category: string
+          city: string
+          created_at: string
+          description: string | null
+          district: string | null
+          ear_tag_number: string
+          estimated_weight_kg: number | null
+          head_count: number
+          id: string
+          images: string[]
+          price_per_head: number
+          seller_id: string | null
+          seller_name: string
+          status: Database["public"]["Enums"]["listing_status"]
+          title: string
+          total_price: number
+          video_url: string | null
+        }
+        Insert: {
+          age_months?: number | null
+          birth_date?: string | null
+          breed: string
+          category: string
+          city: string
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          ear_tag_number: string
+          estimated_weight_kg?: number | null
+          head_count?: number
+          id?: string
+          images?: string[]
+          price_per_head: number
+          seller_id?: string | null
+          seller_name?: string
+          status?: Database["public"]["Enums"]["listing_status"]
+          title: string
+          total_price: number
+          video_url?: string | null
+        }
+        Update: {
+          age_months?: number | null
+          birth_date?: string | null
+          breed?: string
+          category?: string
+          city?: string
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          ear_tag_number?: string
+          estimated_weight_kg?: number | null
+          head_count?: number
+          id?: string
+          images?: string[]
+          price_per_head?: number
+          seller_id?: string | null
+          seller_name?: string
+          status?: Database["public"]["Enums"]["listing_status"]
+          title?: string
+          total_price?: number
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          city: string | null
+          created_at: string
+          district: string | null
+          full_name: string
+          id: string
+          is_verified: boolean
+          phone_number: string | null
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          district?: string | null
+          full_name?: string
+          id: string
+          is_verified?: boolean
+          phone_number?: string | null
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          district?: string | null
+          full_name?: string
+          id?: string
+          is_verified?: boolean
+          phone_number?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vet_inspections: {
+        Row: {
+          created_at: string
+          general_condition_score: number | null
+          hoof_limb_health: string | null
+          id: string
+          inspection_date: string
+          is_approved: boolean
+          listing_id: string
+          pregnancy_status: string | null
+          respiratory_health: string | null
+          respiratory_note: string | null
+          scale_ticket_photo_url: string | null
+          udder_health: string | null
+          vaccination_verified: boolean
+          verified_weight_kg: number | null
+          vet_id: string | null
+          vet_license_no: string | null
+          vet_name: string
+          vet_notes: string | null
+          video_360_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          general_condition_score?: number | null
+          hoof_limb_health?: string | null
+          id?: string
+          inspection_date?: string
+          is_approved?: boolean
+          listing_id: string
+          pregnancy_status?: string | null
+          respiratory_health?: string | null
+          respiratory_note?: string | null
+          scale_ticket_photo_url?: string | null
+          udder_health?: string | null
+          vaccination_verified?: boolean
+          verified_weight_kg?: number | null
+          vet_id?: string | null
+          vet_license_no?: string | null
+          vet_name?: string
+          vet_notes?: string | null
+          video_360_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          general_condition_score?: number | null
+          hoof_limb_health?: string | null
+          id?: string
+          inspection_date?: string
+          is_approved?: boolean
+          listing_id?: string
+          pregnancy_status?: string | null
+          respiratory_health?: string | null
+          respiratory_note?: string | null
+          scale_ticket_photo_url?: string | null
+          udder_health?: string | null
+          vaccination_verified?: boolean
+          verified_weight_kg?: number | null
+          vet_id?: string | null
+          vet_license_no?: string | null
+          vet_name?: string
+          vet_notes?: string | null
+          video_360_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vet_inspections_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "buyer" | "seller" | "vet" | "admin"
+      escrow_status:
+        | "deposit_pending"
+        | "deposit_locked"
+        | "vet_approved"
+        | "transport_started"
+        | "completed"
+        | "cancelled"
+      listing_status:
+        | "draft"
+        | "active"
+        | "inspection_pending"
+        | "inspected"
+        | "sold"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +406,23 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["buyer", "seller", "vet", "admin"],
+      escrow_status: [
+        "deposit_pending",
+        "deposit_locked",
+        "vet_approved",
+        "transport_started",
+        "completed",
+        "cancelled",
+      ],
+      listing_status: [
+        "draft",
+        "active",
+        "inspection_pending",
+        "inspected",
+        "sold",
+      ],
+    },
   },
 } as const
