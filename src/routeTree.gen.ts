@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as GirisRouteImport } from './routes/giris'
+import { Route as AuthenticatedSiparislerimRouteImport } from './routes/_authenticated/siparislerim'
 import { Route as IlanIdRouteImport } from './routes/ilan.$id'
 
 const IndexRoute = IndexRouteImport.update({
@@ -17,6 +20,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GirisRoute = GirisRouteImport.update({
+  id: '/giris',
+  path: '/giris',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSiparislerimRoute =
+  AuthenticatedSiparislerimRouteImport.update({
+    id: '/siparislerim',
+    path: '/siparislerim',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const IlanIdRoute = IlanIdRouteImport.update({
   id: '/ilan/$id',
   path: '/ilan/$id',
@@ -25,27 +43,42 @@ const IlanIdRoute = IlanIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/giris': typeof GirisRoute
+  '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/giris': typeof GirisRoute
+  '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/giris': typeof GirisRoute
+  '/_authenticated/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ilan/$id'
+  fullPaths: '/' | '/giris' | '/siparislerim' | '/ilan/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ilan/$id'
-  id: '__root__' | '/' | '/ilan/$id'
+  to: '/' | '/giris' | '/siparislerim' | '/ilan/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/giris'
+    | '/_authenticated/siparislerim'
+    | '/ilan/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  GirisRoute: typeof GirisRoute
   IlanIdRoute: typeof IlanIdRoute
 }
 
@@ -58,6 +91,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/giris': {
+      id: '/giris'
+      path: '/giris'
+      fullPath: '/giris'
+      preLoaderRoute: typeof GirisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/siparislerim': {
+      id: '/_authenticated/siparislerim'
+      path: '/siparislerim'
+      fullPath: '/siparislerim'
+      preLoaderRoute: typeof AuthenticatedSiparislerimRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/ilan/$id': {
       id: '/ilan/$id'
       path: '/ilan/$id'
@@ -68,8 +122,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedSiparislerimRoute: typeof AuthenticatedSiparislerimRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedSiparislerimRoute: AuthenticatedSiparislerimRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  GirisRoute: GirisRoute,
   IlanIdRoute: IlanIdRoute,
 }
 export const routeTree = rootRouteImport
