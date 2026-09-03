@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+
 import { ROLE_LABELS, CITIES } from "@/lib/marketplace";
 
 export const Route = createFileRoute("/giris")({
@@ -106,17 +106,6 @@ function AuthPage() {
     navigate({ to: "/", replace: true });
   };
 
-  const google = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin,
-    });
-    if (result.error) {
-      toast.error("Google ile giriş yapılamadı.");
-      return;
-    }
-    if (result.redirected) return;
-    navigate({ to: "/", replace: true });
-  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-surface px-4 py-10">
@@ -250,12 +239,6 @@ function AuthPage() {
           </TabsContent>
         </Tabs>
 
-        <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="h-px flex-1 bg-border" /> veya <span className="h-px flex-1 bg-border" />
-        </div>
-        <Button variant="outline" size="lg" className="w-full" onClick={google}>
-          Google ile devam et
-        </Button>
       </div>
     </div>
   );
