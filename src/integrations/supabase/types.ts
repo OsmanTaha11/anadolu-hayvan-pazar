@@ -74,9 +74,12 @@ export type Database = {
           id: string
           images: string[]
           price_per_head: number
+          reels_video_url: string | null
           seller_id: string | null
           seller_name: string
+          seller_phone: string | null
           status: Database["public"]["Enums"]["listing_status"]
+          thumbnail_url: string | null
           title: string
           total_price: number
           video_url: string | null
@@ -96,9 +99,12 @@ export type Database = {
           id?: string
           images?: string[]
           price_per_head: number
+          reels_video_url?: string | null
           seller_id?: string | null
           seller_name?: string
+          seller_phone?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
+          thumbnail_url?: string | null
           title: string
           total_price: number
           video_url?: string | null
@@ -118,9 +124,12 @@ export type Database = {
           id?: string
           images?: string[]
           price_per_head?: number
+          reels_video_url?: string | null
           seller_id?: string | null
           seller_name?: string
+          seller_phone?: string | null
           status?: Database["public"]["Enums"]["listing_status"]
+          thumbnail_url?: string | null
           title?: string
           total_price?: number
           video_url?: string | null

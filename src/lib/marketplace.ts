@@ -99,6 +99,9 @@ export type Listing = {
   description: string | null;
   images: string[];
   video_url: string | null;
+  reels_video_url: string | null;
+  thumbnail_url: string | null;
+  seller_phone: string | null;
   status: string;
   created_at: string;
 };
