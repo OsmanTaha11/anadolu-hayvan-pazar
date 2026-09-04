@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as GirisRouteImport } from './routes/giris'
+import { Route as KesfetRouteImport } from './routes/kesfet'
 import { Route as AuthenticatedSiparislerimRouteImport } from './routes/_authenticated/siparislerim'
 import { Route as IlanIdRouteImport } from './routes/ilan.$id'
 
@@ -29,6 +30,11 @@ const GirisRoute = GirisRouteImport.update({
   path: '/giris',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KesfetRoute = KesfetRouteImport.update({
+  id: '/kesfet',
+  path: '/kesfet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedSiparislerimRoute =
   AuthenticatedSiparislerimRouteImport.update({
     id: '/siparislerim',
@@ -44,12 +50,14 @@ const IlanIdRoute = IlanIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/giris': typeof GirisRoute
+  '/kesfet': typeof KesfetRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/giris': typeof GirisRoute
+  '/kesfet': typeof KesfetRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
@@ -58,19 +66,21 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/giris': typeof GirisRoute
+  '/kesfet': typeof KesfetRoute
   '/_authenticated/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/giris' | '/siparislerim' | '/ilan/$id'
+  fullPaths: '/' | '/giris' | '/kesfet' | '/siparislerim' | '/ilan/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/giris' | '/siparislerim' | '/ilan/$id'
+  to: '/' | '/giris' | '/kesfet' | '/siparislerim' | '/ilan/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/giris'
+    | '/kesfet'
     | '/_authenticated/siparislerim'
     | '/ilan/$id'
   fileRoutesById: FileRoutesById
@@ -79,6 +89,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   GirisRoute: typeof GirisRoute
+  KesfetRoute: typeof KesfetRoute
   IlanIdRoute: typeof IlanIdRoute
 }
 
@@ -103,6 +114,13 @@ declare module '@tanstack/react-router' {
       path: '/giris'
       fullPath: '/giris'
       preLoaderRoute: typeof GirisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kesfet': {
+      id: '/kesfet'
+      path: '/kesfet'
+      fullPath: '/kesfet'
+      preLoaderRoute: typeof KesfetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/siparislerim': {
@@ -137,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   GirisRoute: GirisRoute,
+  KesfetRoute: KesfetRoute,
   IlanIdRoute: IlanIdRoute,
 }
 export const routeTree = rootRouteImport
