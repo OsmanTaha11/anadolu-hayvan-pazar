@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, Menu, ShieldCheck, X } from "lucide-react";
+import { Clapperboard, LogOut, Menu, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -44,6 +44,11 @@ export function SiteHeader() {
           <Button variant="ghost" asChild>
             <Link to="/">İlanlar</Link>
           </Button>
+          <Button variant="ghost" asChild>
+            <Link to="/kesfet">
+              <Clapperboard className="size-4" aria-hidden /> Keşfet (Reels)
+            </Link>
+          </Button>
           {user ? (
             <>
               <Button variant="ghost" asChild>
@@ -79,6 +84,11 @@ export function SiteHeader() {
           <div className="flex flex-col gap-2">
             <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
               <Link to="/">İlanlar</Link>
+            </Button>
+            <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
+              <Link to="/kesfet">
+                <Clapperboard className="size-4" aria-hidden /> Keşfet (Reels)
+              </Link>
             </Button>
             {user ? (
               <>
