@@ -215,7 +215,7 @@ export function ReelItem({
       </button>
 
       {verified ? (
-        <span className="absolute left-4 top-4 z-10 inline-flex items-center gap-1.5 rounded-full bg-verified px-3 py-1.5 text-xs font-semibold text-verified-foreground shadow-lift">
+        <span className="absolute left-16 top-4 z-10 inline-flex max-w-[calc(100%-9rem)] items-center gap-1.5 rounded-full bg-verified px-3 py-1.5 text-xs font-semibold text-verified-foreground shadow-lift">
           <BadgeCheck className="size-4" aria-hidden /> Veteriner Onaylı Ekspertiz
         </span>
       ) : null}
