@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as GirisRouteImport } from './routes/giris'
+import { Route as KesfetRouteImport } from './routes/kesfet'
+import { Route as AuthenticatedSaticiRouteImport } from './routes/_authenticated/satici'
 import { Route as AuthenticatedSiparislerimRouteImport } from './routes/_authenticated/siparislerim'
 import { Route as IlanIdRouteImport } from './routes/ilan.$id'
 
@@ -29,6 +31,16 @@ const GirisRoute = GirisRouteImport.update({
   path: '/giris',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KesfetRoute = KesfetRouteImport.update({
+  id: '/kesfet',
+  path: '/kesfet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSaticiRoute = AuthenticatedSaticiRouteImport.update({
+  id: '/satici',
+  path: '/satici',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSiparislerimRoute =
   AuthenticatedSiparislerimRouteImport.update({
     id: '/siparislerim',
@@ -44,12 +56,16 @@ const IlanIdRoute = IlanIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/giris': typeof GirisRoute
+  '/kesfet': typeof KesfetRoute
+  '/satici': typeof AuthenticatedSaticiRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/giris': typeof GirisRoute
+  '/kesfet': typeof KesfetRoute
+  '/satici': typeof AuthenticatedSaticiRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
@@ -58,19 +74,24 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/giris': typeof GirisRoute
+  '/kesfet': typeof KesfetRoute
+  '/_authenticated/satici': typeof AuthenticatedSaticiRoute
   '/_authenticated/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/ilan/$id': typeof IlanIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/giris' | '/siparislerim' | '/ilan/$id'
+  fullPaths:
+    '/' | '/giris' | '/kesfet' | '/satici' | '/siparislerim' | '/ilan/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/giris' | '/siparislerim' | '/ilan/$id'
+  to: '/' | '/giris' | '/kesfet' | '/satici' | '/siparislerim' | '/ilan/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/giris'
+    | '/kesfet'
+    | '/_authenticated/satici'
     | '/_authenticated/siparislerim'
     | '/ilan/$id'
   fileRoutesById: FileRoutesById
@@ -79,6 +100,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   GirisRoute: typeof GirisRoute
+  KesfetRoute: typeof KesfetRoute
   IlanIdRoute: typeof IlanIdRoute
 }
 
@@ -105,6 +127,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GirisRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kesfet': {
+      id: '/kesfet'
+      path: '/kesfet'
+      fullPath: '/kesfet'
+      preLoaderRoute: typeof KesfetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/satici': {
+      id: '/_authenticated/satici'
+      path: '/satici'
+      fullPath: '/satici'
+      preLoaderRoute: typeof AuthenticatedSaticiRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/siparislerim': {
       id: '/_authenticated/siparislerim'
       path: '/siparislerim'
@@ -123,10 +159,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedSaticiRoute: typeof AuthenticatedSaticiRoute
   AuthenticatedSiparislerimRoute: typeof AuthenticatedSiparislerimRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedSaticiRoute: AuthenticatedSaticiRoute,
   AuthenticatedSiparislerimRoute: AuthenticatedSiparislerimRoute,
 }
 
@@ -137,6 +175,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   GirisRoute: GirisRoute,
+  KesfetRoute: KesfetRoute,
   IlanIdRoute: IlanIdRoute,
 }
 export const routeTree = rootRouteImport
