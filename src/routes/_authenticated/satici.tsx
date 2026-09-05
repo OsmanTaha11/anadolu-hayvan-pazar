@@ -57,13 +57,70 @@ export const Route = createFileRoute("/_authenticated/satici")({
   component: SellerPage,
 });
 
-const MAX_VIDEO_MB = 60;
-
 function SellerPage() {
   const { user, role } = useSession();
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [video, setVideo] = useState<File | null>(null);
+  const [videoMeta, setVideoMeta] = useState<VideoMeta | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!video) {
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(video);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [video]);
+
+  const pickVideo = async (file: File | null) => {
+    setVideo(file);
+    setVideoMeta(null);
+    setVideoError(null);
+    if (!file) return;
+    try {
+      const meta = await readVideoMeta(file);
+      setVideoMeta(meta);
+      const err = validateReel(file, meta);
+      setVideoError(err);
+      if (err) toast.error(err);
+    } catch {
+      setVideoError("Video dosyası okunamadı.");
+    }
+  };
+
+  /** Adds or replaces the reel video of an existing listing. */
+  const replaceReel = async (listingId: string, file: File) => {
+    if (!user) return;
+    setUploadingFor(listingId);
+    try {
+      const meta = await readVideoMeta(file);
+      const invalid = validateReel(file, meta);
+      if (invalid) {
+        toast.error(invalid);
+        return;
+      }
+      const media = await uploadReel(user.id, file);
+      const { error } = await supabase
+        .from("listings")
+        .update(media)
+        .eq("id", listingId)
+        .eq("seller_id", user.id);
+      if (error) throw error;
+      toast.success("Video yüklendi. Keşfet akışında yayında.");
+      await queryClient.invalidateQueries({ queryKey: ["my-listings", user.id] });
+      await queryClient.invalidateQueries({ queryKey: ["reels"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Video yüklenemedi.");
+    } finally {
+      setUploadingFor(null);
+    }
+  };
+
 
   const [form, setForm] = useState({
     title: "",
