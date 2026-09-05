@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { BadgeCheck, Search, ShieldCheck, Truck, Stethoscope } from "lucide-react";
+import { BadgeCheck, PlayCircle, Search, ShieldCheck, Truck, Stethoscope } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
 import { ListingCard } from "@/components/listing-card";
@@ -90,7 +90,13 @@ function HomePage() {
     return map;
   }, [data]);
 
+  const reelListings = useMemo(
+    () => (data?.listings ?? []).filter((l) => Boolean(l.reels_video_url)).slice(0, 8),
+    [data],
+  );
+
   const filtered = useMemo(() => {
+
     return (data?.listings ?? []).filter((l) => {
       const insp = inspectionByListing.get(l.id);
       const verified = Boolean(insp?.is_approved);
@@ -318,7 +324,52 @@ function HomePage() {
             </div>
           )}
         </section>
+
+        <section className="border-t border-border bg-secondary/40 py-12">
+          <div className="mx-auto w-full max-w-6xl px-4">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2 className="font-display text-2xl font-bold">Keşfet (Reels)</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Hayvanların yürüyüşünü, tırnaklarını ve beden yapısını dikey videolarla izleyin.
+                </p>
+              </div>
+              <Button asChild>
+                <Link to="/kesfet">Videoları İzle</Link>
+              </Button>
+            </div>
+
+            <div className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              {reelListings.map((l) => (
+                <Link
+                  key={l.id}
+                  to="/kesfet"
+                  className="group relative aspect-[9/16] w-40 shrink-0 snap-start overflow-hidden rounded-xl bg-muted shadow-card sm:w-48"
+                >
+                  <img
+                    src={l.thumbnail_url?.startsWith("/") ? l.thumbnail_url : (l.images[0] ?? "")}
+                    alt={`${l.title} tanıtım videosu`}
+                    loading="lazy"
+                    className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                  <span className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white ring-1 ring-white/25">
+                    <PlayCircle className="size-4" aria-hidden />
+                  </span>
+                  <div className="absolute inset-x-0 bottom-0 p-3 text-primary-foreground">
+                    <p className="line-clamp-2 text-xs font-semibold">{l.title}</p>
+                    <p className="mt-1 text-[11px] opacity-85">
+                      {l.city}
+                      {l.district ? `, ${l.district}` : ""}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
       </main>
+
 
       <footer className="border-t border-border bg-secondary py-8 text-secondary-foreground">
         <div className="mx-auto w-full max-w-6xl px-4 text-sm">
