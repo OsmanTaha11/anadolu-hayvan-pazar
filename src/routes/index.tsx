@@ -90,7 +90,13 @@ function HomePage() {
     return map;
   }, [data]);
 
+  const reelListings = useMemo(
+    () => (data?.listings ?? []).filter((l) => Boolean(l.reels_video_url)).slice(0, 8),
+    [data],
+  );
+
   const filtered = useMemo(() => {
+
     return (data?.listings ?? []).filter((l) => {
       const insp = inspectionByListing.get(l.id);
       const verified = Boolean(insp?.is_approved);
