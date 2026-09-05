@@ -1,0 +1,3 @@
+UPDATE public.listings SET reels_video_url='/__l5e/assets-v1/57fa4b14-606c-4bca-bd9d-44926c1a2067/reel6.mp4', thumbnail_url='/images/poster6.jpg' WHERE id='11111111-1111-4111-8111-000000000003';
+UPDATE public.listings SET reels_video_url='/__l5e/assets-v1/84b2c4b4-8a65-4d44-87ba-e8553a5a85ae/reel7.mp4', thumbnail_url='/images/poster7.jpg' WHERE id='11111111-1111-4111-8111-000000000005';
+UPDATE public.listings SET reels_video_url='/__l5e/assets-v1/055603ae-4c0e-4687-a199-fe477573765a/reel8.mp4', thumbnail_url='/images/poster8.jpg' WHERE id='11111111-1111-4111-8111-000000000006';
