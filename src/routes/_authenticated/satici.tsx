@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Clapperboard, Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,7 +18,14 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
-import { LISTING_MEDIA_BUCKET, STORAGE_PREFIX } from "@/lib/media";
+import { uploadReel } from "@/lib/reel-upload";
+import {
+  MAX_REEL_MB,
+  MAX_REEL_SECONDS,
+  readVideoMeta,
+  validateReel,
+  type VideoMeta,
+} from "@/lib/video";
 import {
   BREEDS,
   CATEGORIES,
@@ -27,6 +34,7 @@ import {
   formatTRY,
   type Listing,
 } from "@/lib/marketplace";
+
 
 export const Route = createFileRoute("/_authenticated/satici")({
   head: () => ({
