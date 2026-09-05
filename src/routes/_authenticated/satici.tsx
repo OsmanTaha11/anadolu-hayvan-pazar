@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Clapperboard, Loader2, Upload } from "lucide-react";
 import { toast } from "sonner";
 
@@ -18,7 +18,14 @@ import {
 } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
-import { LISTING_MEDIA_BUCKET, STORAGE_PREFIX } from "@/lib/media";
+import { uploadReel } from "@/lib/reel-upload";
+import {
+  MAX_REEL_MB,
+  MAX_REEL_SECONDS,
+  readVideoMeta,
+  validateReel,
+  type VideoMeta,
+} from "@/lib/video";
 import {
   BREEDS,
   CATEGORIES,
@@ -27,6 +34,7 @@ import {
   formatTRY,
   type Listing,
 } from "@/lib/marketplace";
+
 
 export const Route = createFileRoute("/_authenticated/satici")({
   head: () => ({
@@ -49,13 +57,70 @@ export const Route = createFileRoute("/_authenticated/satici")({
   component: SellerPage,
 });
 
-const MAX_VIDEO_MB = 60;
-
 function SellerPage() {
   const { user, role } = useSession();
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [video, setVideo] = useState<File | null>(null);
+  const [videoMeta, setVideoMeta] = useState<VideoMeta | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [uploadingFor, setUploadingFor] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!video) {
+      setPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(video);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [video]);
+
+  const pickVideo = async (file: File | null) => {
+    setVideo(file);
+    setVideoMeta(null);
+    setVideoError(null);
+    if (!file) return;
+    try {
+      const meta = await readVideoMeta(file);
+      setVideoMeta(meta);
+      const err = validateReel(file, meta);
+      setVideoError(err);
+      if (err) toast.error(err);
+    } catch {
+      setVideoError("Video dosyası okunamadı.");
+    }
+  };
+
+  /** Adds or replaces the reel video of an existing listing. */
+  const replaceReel = async (listingId: string, file: File) => {
+    if (!user) return;
+    setUploadingFor(listingId);
+    try {
+      const meta = await readVideoMeta(file);
+      const invalid = validateReel(file, meta);
+      if (invalid) {
+        toast.error(invalid);
+        return;
+      }
+      const media = await uploadReel(user.id, file);
+      const { error } = await supabase
+        .from("listings")
+        .update(media)
+        .eq("id", listingId)
+        .eq("seller_id", user.id);
+      if (error) throw error;
+      toast.success("Video yüklendi. Keşfet akışında yayında.");
+      await queryClient.invalidateQueries({ queryKey: ["my-listings", user.id] });
+      await queryClient.invalidateQueries({ queryKey: ["reels"] });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Video yüklenemedi.");
+    } finally {
+      setUploadingFor(null);
+    }
+  };
+
 
   const [form, setForm] = useState({
     title: "",
@@ -95,22 +160,15 @@ function SellerPage() {
       toast.error("Başlık, küpe numarası ve fiyat zorunludur.");
       return;
     }
-    if (video && video.size > MAX_VIDEO_MB * 1024 * 1024) {
-      toast.error(`Video en fazla ${MAX_VIDEO_MB} MB olabilir.`);
+    if (video && videoError) {
+      toast.error(videoError);
       return;
     }
     setSaving(true);
     try {
-      let reels: string | null = null;
-      if (video) {
-        const ext = video.name.split(".").pop()?.toLowerCase() || "mp4";
-        const path = `${user.id}/reels/${Date.now()}.${ext}`;
-        const { error: upErr } = await supabase.storage
-          .from(LISTING_MEDIA_BUCKET)
-          .upload(path, video, { contentType: video.type || "video/mp4", upsert: false });
-        if (upErr) throw upErr;
-        reels = `${STORAGE_PREFIX}${path}`;
-      }
+      let media: { reels_video_url: string; thumbnail_url: string | null } | null = null;
+      if (video) media = await uploadReel(user.id, video);
+
 
       const head = Number(form.head_count) || 1;
       const perHead = Number(form.price_per_head) || 0;
