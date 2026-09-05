@@ -160,22 +160,15 @@ function SellerPage() {
       toast.error("Başlık, küpe numarası ve fiyat zorunludur.");
       return;
     }
-    if (video && video.size > MAX_VIDEO_MB * 1024 * 1024) {
-      toast.error(`Video en fazla ${MAX_VIDEO_MB} MB olabilir.`);
+    if (video && videoError) {
+      toast.error(videoError);
       return;
     }
     setSaving(true);
     try {
-      let reels: string | null = null;
-      if (video) {
-        const ext = video.name.split(".").pop()?.toLowerCase() || "mp4";
-        const path = `${user.id}/reels/${Date.now()}.${ext}`;
-        const { error: upErr } = await supabase.storage
-          .from(LISTING_MEDIA_BUCKET)
-          .upload(path, video, { contentType: video.type || "video/mp4", upsert: false });
-        if (upErr) throw upErr;
-        reels = `${STORAGE_PREFIX}${path}`;
-      }
+      let media: { reels_video_url: string; thumbnail_url: string | null } | null = null;
+      if (video) media = await uploadReel(user.id, video);
+
 
       const head = Number(form.head_count) || 1;
       const perHead = Number(form.price_per_head) || 0;
