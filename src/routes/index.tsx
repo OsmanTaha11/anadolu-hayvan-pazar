@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { BadgeCheck, Search, ShieldCheck, Truck, Stethoscope } from "lucide-react";
+import { BadgeCheck, PlayCircle, Search, ShieldCheck, Truck, Stethoscope } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
 import { ListingCard } from "@/components/listing-card";
