@@ -368,12 +368,36 @@ function SellerPage() {
                     {l.reels_video_url ? " · Dikey video yüklü" : " · Dikey video yok"}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="font-display font-bold">{formatTRY(l.price_per_head)}</span>
+                  <Label
+                    htmlFor={`reel-${l.id}`}
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-medium hover:bg-muted"
+                  >
+                    {uploadingFor === l.id ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <Clapperboard className="size-4 text-primary" aria-hidden />
+                    )}
+                    {l.reels_video_url ? "Videoyu Değiştir" : "Dikey Video Yükle"}
+                  </Label>
+                  <input
+                    id={`reel-${l.id}`}
+                    type="file"
+                    accept="video/mp4,video/quicktime,video/webm"
+                    className="sr-only"
+                    disabled={uploadingFor !== null}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      e.target.value = "";
+                      if (f) void replaceReel(l.id, f);
+                    }}
+                  />
                   <Button variant="ghost" asChild>
                     <Link to="/ilan/$id" params={{ id: l.id }}>Görüntüle</Link>
                   </Button>
                 </div>
+
               </li>
             ))}
           </ul>
