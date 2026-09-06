@@ -188,15 +188,19 @@ function SellerPage() {
         district: form.district || null,
         seller_phone: form.seller_phone || null,
         description: form.description || null,
-        reels_video_url: reels,
+        reels_video_url: media?.reels_video_url ?? null,
+        thumbnail_url: media?.thumbnail_url ?? null,
         status: "inspection_pending",
       });
       if (error) throw error;
 
       toast.success("İlan oluşturuldu. Veteriner ekspertizi için sıraya alındı.");
       setVideo(null);
+      setVideoMeta(null);
       setForm((f) => ({ ...f, title: "", ear_tag_number: "", description: "" }));
       await queryClient.invalidateQueries({ queryKey: ["my-listings", user.id] });
+      await queryClient.invalidateQueries({ queryKey: ["reels"] });
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "İlan kaydedilemedi.");
     } finally {
@@ -294,25 +298,48 @@ function SellerPage() {
           <div className="sm:col-span-2 rounded-lg border border-dashed border-border bg-muted/40 p-4">
             <Label htmlFor="reels" className="flex items-center gap-2 text-sm font-semibold">
               <Clapperboard className="size-4 text-primary" aria-hidden />
-              Dikey Video / Reels Yükle (Maks. 30 saniye)
+              Dikey Video / Reels Yükle (Maks. {MAX_REEL_SECONDS} saniye)
             </Label>
             <p className="mt-1 text-xs text-muted-foreground">
               Hayvanın yürüyüşünü, tırnaklarını ve beden yapısını net gösterecek 9:16 formatında
-              dikey video yükleyin.
+              dikey video yükleyin. En fazla {MAX_REEL_MB} MB.
             </p>
             <Input
               id="reels"
               type="file"
               accept="video/mp4,video/quicktime,video/webm"
               className="mt-3"
-              onChange={(e) => setVideo(e.target.files?.[0] ?? null)}
+              onChange={(e) => void pickVideo(e.target.files?.[0] ?? null)}
             />
             {video ? (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Seçilen dosya: {video.name} ({(video.size / 1024 / 1024).toFixed(1)} MB)
-              </p>
+              <div className="mt-3 flex flex-wrap items-start gap-4">
+                {previewUrl ? (
+                  <video
+                    src={previewUrl}
+                    className="h-56 w-32 rounded-lg bg-black object-cover"
+                    controls
+                    muted
+                    playsInline
+                  />
+                ) : null}
+                <div className="text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground">{video.name}</p>
+                  <p>{(video.size / 1024 / 1024).toFixed(1)} MB</p>
+                  {videoMeta ? (
+                    <p>
+                      {Math.round(videoMeta.duration)} sn · {videoMeta.width}×{videoMeta.height} px
+                    </p>
+                  ) : null}
+                  {videoError ? (
+                    <p className="mt-1 font-medium text-destructive">{videoError}</p>
+                  ) : videoMeta ? (
+                    <p className="mt-1 font-medium text-primary">Video uygun ✓</p>
+                  ) : null}
+                </div>
+              </div>
             ) : null}
           </div>
+
 
           <div className="sm:col-span-2 flex flex-wrap gap-3">
             <Button type="submit" disabled={saving}>
@@ -341,12 +368,36 @@ function SellerPage() {
                     {l.reels_video_url ? " · Dikey video yüklü" : " · Dikey video yok"}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="font-display font-bold">{formatTRY(l.price_per_head)}</span>
+                  <Label
+                    htmlFor={`reel-${l.id}`}
+                    className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-medium hover:bg-muted"
+                  >
+                    {uploadingFor === l.id ? (
+                      <Loader2 className="size-4 animate-spin" aria-hidden />
+                    ) : (
+                      <Clapperboard className="size-4 text-primary" aria-hidden />
+                    )}
+                    {l.reels_video_url ? "Videoyu Değiştir" : "Dikey Video Yükle"}
+                  </Label>
+                  <input
+                    id={`reel-${l.id}`}
+                    type="file"
+                    accept="video/mp4,video/quicktime,video/webm"
+                    className="sr-only"
+                    disabled={uploadingFor !== null}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      e.target.value = "";
+                      if (f) void replaceReel(l.id, f);
+                    }}
+                  />
                   <Button variant="ghost" asChild>
                     <Link to="/ilan/$id" params={{ id: l.id }}>Görüntüle</Link>
                   </Button>
                 </div>
+
               </li>
             ))}
           </ul>
