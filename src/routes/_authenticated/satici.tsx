@@ -298,25 +298,48 @@ function SellerPage() {
           <div className="sm:col-span-2 rounded-lg border border-dashed border-border bg-muted/40 p-4">
             <Label htmlFor="reels" className="flex items-center gap-2 text-sm font-semibold">
               <Clapperboard className="size-4 text-primary" aria-hidden />
-              Dikey Video / Reels Yükle (Maks. 30 saniye)
+              Dikey Video / Reels Yükle (Maks. {MAX_REEL_SECONDS} saniye)
             </Label>
             <p className="mt-1 text-xs text-muted-foreground">
               Hayvanın yürüyüşünü, tırnaklarını ve beden yapısını net gösterecek 9:16 formatında
-              dikey video yükleyin.
+              dikey video yükleyin. En fazla {MAX_REEL_MB} MB.
             </p>
             <Input
               id="reels"
               type="file"
               accept="video/mp4,video/quicktime,video/webm"
               className="mt-3"
-              onChange={(e) => setVideo(e.target.files?.[0] ?? null)}
+              onChange={(e) => void pickVideo(e.target.files?.[0] ?? null)}
             />
             {video ? (
-              <p className="mt-2 text-xs text-muted-foreground">
-                Seçilen dosya: {video.name} ({(video.size / 1024 / 1024).toFixed(1)} MB)
-              </p>
+              <div className="mt-3 flex flex-wrap items-start gap-4">
+                {previewUrl ? (
+                  <video
+                    src={previewUrl}
+                    className="h-56 w-32 rounded-lg bg-black object-cover"
+                    controls
+                    muted
+                    playsInline
+                  />
+                ) : null}
+                <div className="text-xs text-muted-foreground">
+                  <p className="font-medium text-foreground">{video.name}</p>
+                  <p>{(video.size / 1024 / 1024).toFixed(1)} MB</p>
+                  {videoMeta ? (
+                    <p>
+                      {Math.round(videoMeta.duration)} sn · {videoMeta.width}×{videoMeta.height} px
+                    </p>
+                  ) : null}
+                  {videoError ? (
+                    <p className="mt-1 font-medium text-destructive">{videoError}</p>
+                  ) : videoMeta ? (
+                    <p className="mt-1 font-medium text-primary">Video uygun ✓</p>
+                  ) : null}
+                </div>
+              </div>
             ) : null}
           </div>
+
 
           <div className="sm:col-span-2 flex flex-wrap gap-3">
             <Button type="submit" disabled={saving}>
