@@ -188,15 +188,19 @@ function SellerPage() {
         district: form.district || null,
         seller_phone: form.seller_phone || null,
         description: form.description || null,
-        reels_video_url: reels,
+        reels_video_url: media?.reels_video_url ?? null,
+        thumbnail_url: media?.thumbnail_url ?? null,
         status: "inspection_pending",
       });
       if (error) throw error;
 
       toast.success("İlan oluşturuldu. Veteriner ekspertizi için sıraya alındı.");
       setVideo(null);
+      setVideoMeta(null);
       setForm((f) => ({ ...f, title: "", ear_tag_number: "", description: "" }));
       await queryClient.invalidateQueries({ queryKey: ["my-listings", user.id] });
+      await queryClient.invalidateQueries({ queryKey: ["reels"] });
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "İlan kaydedilemedi.");
     } finally {
