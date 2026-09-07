@@ -1,6 +1,8 @@
 import { BadgeCheck, CheckCircle2, CircleAlert, Stethoscope } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { formatDate, type VetInspection } from "@/lib/marketplace";
+import { resolveMediaUrl } from "@/lib/media";
 
 function CheckRow({ label, value, ok }: { label: string; value: string; ok: boolean }) {
   return (
@@ -19,6 +21,18 @@ function CheckRow({ label, value, ok }: { label: string; value: string; ok: bool
 }
 
 export function VetReportCard({ inspection }: { inspection: VetInspection }) {
+  const [ticketUrl, setTicketUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void resolveMediaUrl(inspection.scale_ticket_photo_url).then((url) => {
+      if (active) setTicketUrl(url);
+    });
+    return () => {
+      active = false;
+    };
+  }, [inspection.scale_ticket_photo_url]);
+
   const ok = (v: string | null | undefined) =>
     Boolean(v && /normal|sağlıklı|negatif|uygulanamaz/i.test(v));
 
@@ -95,10 +109,10 @@ export function VetReportCard({ inspection }: { inspection: VetInspection }) {
         </div>
 
         <div className="space-y-4">
-          {inspection.scale_ticket_photo_url ? (
+          {ticketUrl ? (
             <figure>
               <img
-                src={inspection.scale_ticket_photo_url}
+                src={ticketUrl}
                 alt="Kantar tartı fişi fotoğrafı"
                 loading="lazy"
                 width={1024}
