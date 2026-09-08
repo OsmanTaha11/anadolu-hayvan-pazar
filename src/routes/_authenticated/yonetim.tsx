@@ -40,6 +40,8 @@ const LISTING_STATUSES = [
   "sold",
 ] as const;
 
+type ListingStatus = (typeof LISTING_STATUSES)[number];
+
 type Profile = {
   id: string;
   full_name: string;
@@ -175,7 +177,7 @@ function AdminPage() {
     try {
       const { error } = await supabase
         .from("listings")
-        .update({ status: status as Listing["status"] })
+        .update({ status: status as ListingStatus })
         .eq("id", listing.id);
       if (error) throw error;
       toast.success(`İlan durumu güncellendi: ${STATUS_LABELS[status] ?? status}`);
@@ -208,7 +210,7 @@ function AdminPage() {
         if (nextStatus !== listing.status) {
           const { error: linkError } = await supabase
             .from("listings")
-            .update({ status: nextStatus as Listing["status"] })
+            .update({ status: nextStatus as ListingStatus })
             .eq("id", listing.id);
           if (linkError) throw linkError;
         }
