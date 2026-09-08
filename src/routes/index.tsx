@@ -63,6 +63,16 @@ function HomePage() {
   const [maxWeight, setMaxWeight] = useState("");
   const [onlyVerified, setOnlyVerified] = useState(false);
 
+  const activeFilterCount =
+    (breed !== ALL ? 1 : 0) +
+    (category !== ALL ? 1 : 0) +
+    (purpose !== ALL ? 1 : 0) +
+    (city !== ALL ? 1 : 0) +
+    (minHead ? 1 : 0) +
+    (minWeight ? 1 : 0) +
+    (maxWeight ? 1 : 0) +
+    (onlyVerified ? 1 : 0);
+
   const { data, isLoading } = useQuery({
     queryKey: ["marketplace"],
     queryFn: async () => {
