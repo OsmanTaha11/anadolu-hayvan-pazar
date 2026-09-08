@@ -172,132 +172,153 @@ function HomePage() {
 
         <section id="ilanlar" className="mx-auto w-full max-w-6xl px-4 py-10">
           <div className="surface-panel p-4 md:p-5">
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-                aria-hidden
-              />
-              <Input
-                value={term}
-                onChange={(e) => setTerm(e.target.value)}
-                placeholder="Irk, küpe no veya şehir ara..."
-                aria-label="İlan ara"
-                className="h-12 pl-9"
-              />
-            </div>
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <div>
-                <Label className="text-xs text-muted-foreground">Irk</Label>
-                <Select value={breed} onValueChange={setBreed}>
-                  <SelectTrigger className="mt-1 h-11 w-full">
-                    <SelectValue placeholder="Tüm ırklar" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL}>Tüm ırklar</SelectItem>
-                    {BREEDS.map((b) => (
-                      <SelectItem key={b} value={b}>
-                        {b}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Kategori</Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="mt-1 h-11 w-full">
-                    <SelectValue placeholder="Tümü" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL}>Tümü</SelectItem>
-                    {CATEGORIES.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Amaç</Label>
-                <Select value={purpose} onValueChange={setPurpose}>
-                  <SelectTrigger className="mt-1 h-11 w-full">
-                    <SelectValue placeholder="Besi / Damızlık" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL}>Besi / Damızlık</SelectItem>
-                    {PURPOSES.map((p) => (
-                      <SelectItem key={p} value={p}>
-                        {p}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs text-muted-foreground">Şehir</Label>
-                <Select value={city} onValueChange={setCity}>
-                  <SelectTrigger className="mt-1 h-11 w-full">
-                    <SelectValue placeholder="Tüm şehirler" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={ALL}>Tüm şehirler</SelectItem>
-                    {CITIES.map((c) => (
-                      <SelectItem key={c} value={c}>
-                        {c}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="minHead" className="text-xs text-muted-foreground">
-                  Min. adet
-                </Label>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search
+                  className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
                 <Input
-                  id="minHead"
-                  inputMode="numeric"
-                  className="mt-1 h-11"
-                  value={minHead}
-                  onChange={(e) => setMinHead(e.target.value)}
-                  placeholder="örn. 5"
+                  value={term}
+                  onChange={(e) => setTerm(e.target.value)}
+                  placeholder="Irk, küpe no veya şehir ara..."
+                  aria-label="İlan ara"
+                  className="h-12 pl-9"
                 />
               </div>
-              <div>
-                <Label htmlFor="minWeight" className="text-xs text-muted-foreground">
-                  Min. kilo (kg)
-                </Label>
-                <Input
-                  id="minWeight"
-                  inputMode="numeric"
-                  className="mt-1 h-11"
-                  value={minWeight}
-                  onChange={(e) => setMinWeight(e.target.value)}
-                  placeholder="300"
-                />
-              </div>
-              <div>
-                <Label htmlFor="maxWeight" className="text-xs text-muted-foreground">
-                  Maks. kilo (kg)
-                </Label>
-                <Input
-                  id="maxWeight"
-                  inputMode="numeric"
-                  className="mt-1 h-11"
-                  value={maxWeight}
-                  onChange={(e) => setMaxWeight(e.target.value)}
-                  placeholder="600"
-                />
-              </div>
-              <div className="flex items-end">
-                <div className="flex h-11 w-full items-center justify-between rounded-md border border-input px-3">
-                  <Label htmlFor="verified" className="text-sm">
-                    Sadece Veteriner Onaylılar
-                  </Label>
-                  <Switch id="verified" checked={onlyVerified} onCheckedChange={setOnlyVerified} />
-                </div>
-              </div>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="relative h-12 w-12 shrink-0"
+                    aria-label="Filtreleme seçenekleri"
+                  >
+                    <MoreVertical className="size-5" aria-hidden />
+                    {activeFilterCount > 0 && (
+                      <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-80 p-4">
+                  <p className="mb-3 text-sm font-semibold">Filtrele</p>
+                  <div className="grid gap-3">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Irk</Label>
+                      <Select value={breed} onValueChange={setBreed}>
+                        <SelectTrigger className="mt-1 h-11 w-full">
+                          <SelectValue placeholder="Tüm ırklar" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ALL}>Tüm ırklar</SelectItem>
+                          {BREEDS.map((b) => (
+                            <SelectItem key={b} value={b}>
+                              {b}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Kategori</Label>
+                      <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger className="mt-1 h-11 w-full">
+                          <SelectValue placeholder="Tümü" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ALL}>Tümü</SelectItem>
+                          {CATEGORIES.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Amaç</Label>
+                      <Select value={purpose} onValueChange={setPurpose}>
+                        <SelectTrigger className="mt-1 h-11 w-full">
+                          <SelectValue placeholder="Besi / Damızlık" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ALL}>Besi / Damızlık</SelectItem>
+                          {PURPOSES.map((p) => (
+                            <SelectItem key={p} value={p}>
+                              {p}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Şehir</Label>
+                      <Select value={city} onValueChange={setCity}>
+                        <SelectTrigger className="mt-1 h-11 w-full">
+                          <SelectValue placeholder="Tüm şehirler" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={ALL}>Tüm şehirler</SelectItem>
+                          {CITIES.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <Label htmlFor="minHead" className="text-xs text-muted-foreground">
+                          Min. adet
+                        </Label>
+                        <Input
+                          id="minHead"
+                          inputMode="numeric"
+                          className="mt-1 h-11"
+                          value={minHead}
+                          onChange={(e) => setMinHead(e.target.value)}
+                          placeholder="örn. 5"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="minWeight" className="text-xs text-muted-foreground">
+                          Min. kg
+                        </Label>
+                        <Input
+                          id="minWeight"
+                          inputMode="numeric"
+                          className="mt-1 h-11"
+                          value={minWeight}
+                          onChange={(e) => setMinWeight(e.target.value)}
+                          placeholder="300"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="maxWeight" className="text-xs text-muted-foreground">
+                          Maks. kg
+                        </Label>
+                        <Input
+                          id="maxWeight"
+                          inputMode="numeric"
+                          className="mt-1 h-11"
+                          value={maxWeight}
+                          onChange={(e) => setMaxWeight(e.target.value)}
+                          placeholder="600"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex h-11 w-full items-center justify-between rounded-md border border-input px-3">
+                      <Label htmlFor="verified" className="text-sm">
+                        Sadece Veteriner Onaylılar
+                      </Label>
+                      <Switch id="verified" checked={onlyVerified} onCheckedChange={setOnlyVerified} />
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
