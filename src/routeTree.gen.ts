@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as GirisRouteImport } from './routes/giris'
 import { Route as KesfetRouteImport } from './routes/kesfet'
+import { Route as PazarRouteImport } from './routes/pazar'
 import { Route as AuthenticatedSaticiRouteImport } from './routes/_authenticated/satici'
 import { Route as AuthenticatedSiparislerimRouteImport } from './routes/_authenticated/siparislerim'
 import { Route as AuthenticatedVeterinerRouteImport } from './routes/_authenticated/veteriner'
@@ -36,6 +37,11 @@ const GirisRoute = GirisRouteImport.update({
 const KesfetRoute = KesfetRouteImport.update({
   id: '/kesfet',
   path: '/kesfet',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PazarRoute = PazarRouteImport.update({
+  id: '/pazar',
+  path: '/pazar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSaticiRoute = AuthenticatedSaticiRouteImport.update({
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/giris': typeof GirisRoute
   '/kesfet': typeof KesfetRoute
+  '/pazar': typeof PazarRoute
   '/satici': typeof AuthenticatedSaticiRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/veteriner': typeof AuthenticatedVeterinerRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/giris': typeof GirisRoute
   '/kesfet': typeof KesfetRoute
+  '/pazar': typeof PazarRoute
   '/satici': typeof AuthenticatedSaticiRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/veteriner': typeof AuthenticatedVeterinerRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/giris': typeof GirisRoute
   '/kesfet': typeof KesfetRoute
+  '/pazar': typeof PazarRoute
   '/_authenticated/satici': typeof AuthenticatedSaticiRoute
   '/_authenticated/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/_authenticated/veteriner': typeof AuthenticatedVeterinerRoute
@@ -103,6 +112,7 @@ export interface FileRouteTypes {
     | '/'
     | '/giris'
     | '/kesfet'
+    | '/pazar'
     | '/satici'
     | '/siparislerim'
     | '/veteriner'
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/giris'
     | '/kesfet'
+    | '/pazar'
     | '/satici'
     | '/siparislerim'
     | '/veteriner'
@@ -124,6 +135,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/giris'
     | '/kesfet'
+    | '/pazar'
     | '/_authenticated/satici'
     | '/_authenticated/siparislerim'
     | '/_authenticated/veteriner'
@@ -136,6 +148,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   GirisRoute: typeof GirisRoute
   KesfetRoute: typeof KesfetRoute
+  PazarRoute: typeof PazarRoute
   IlanIdRoute: typeof IlanIdRoute
 }
 
@@ -167,6 +180,13 @@ declare module '@tanstack/react-router' {
       path: '/kesfet'
       fullPath: '/kesfet'
       preLoaderRoute: typeof KesfetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pazar': {
+      id: '/pazar'
+      path: '/pazar'
+      fullPath: '/pazar'
+      preLoaderRoute: typeof PazarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/satici': {
@@ -229,6 +249,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   GirisRoute: GirisRoute,
   KesfetRoute: KesfetRoute,
+  PazarRoute: PazarRoute,
   IlanIdRoute: IlanIdRoute,
 }
 export const routeTree = rootRouteImport
