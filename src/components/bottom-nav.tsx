@@ -1,4 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Clapperboard, Home, PlusSquare, User, UserPlus } from "lucide-react";
 
 import { useSession } from "@/hooks/use-session";
@@ -6,7 +7,10 @@ import { cn } from "@/lib/utils";
 
 export function BottomNav() {
   const { user, role } = useSession();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const routerPath = useRouterState({ select: (s) => s.location.pathname });
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const pathname = mounted ? routerPath : "";
 
   const panel =
     role === "vet"
@@ -28,6 +32,8 @@ export function BottomNav() {
       : { to: "/giris", label: "Giriş", icon: User },
   ] as const;
 
+  if (!mounted) return null;
+
   const onReels = pathname.startsWith("/kesfet");
 
   return (
@@ -43,7 +49,7 @@ export function BottomNav() {
       <ul className="mx-auto flex max-w-md items-stretch justify-between px-2 pb-[env(safe-area-inset-bottom)]">
         {items.map((item, i) => {
           const active =
-            item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
+            mounted && item.to === "/" ? pathname === "/" : pathname.startsWith(item.to);
           const Icon = item.icon;
           return (
             <li key={`${item.to}-${i}`} className="flex-1">
