@@ -37,6 +37,7 @@ export const Route = createFileRoute("/giris")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  ssr: false,
   component: AuthPage,
 });
 
