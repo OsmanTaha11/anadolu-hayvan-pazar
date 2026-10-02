@@ -32,6 +32,8 @@ export function BottomNav() {
       : { to: "/giris", label: "Giriş", icon: User },
   ] as const;
 
+  if (!mounted) return null;
+
   const onReels = pathname.startsWith("/kesfet");
 
   return (
