@@ -42,7 +42,7 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-1 md:flex">
           <Button variant="ghost" asChild>
-            <Link to="/">İlanlar</Link>
+            <Link to="/pazar">İlanlar</Link>
           </Button>
           <Button variant="ghost" asChild>
             <Link to="/kesfet">
