@@ -273,7 +273,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_published_listing_media: { Args: { _name: string }; Returns: boolean }
     }
     Enums: {
       app_role: "buyer" | "seller" | "vet" | "admin"
