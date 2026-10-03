@@ -42,7 +42,7 @@ export function SiteHeader() {
 
         <nav className="hidden items-center gap-1 md:flex">
           <Button variant="ghost" asChild>
-            <Link to="/">İlanlar</Link>
+            <Link to="/pazar">İlanlar</Link>
           </Button>
           <Button variant="ghost" asChild>
             <Link to="/kesfet">
@@ -83,7 +83,7 @@ export function SiteHeader() {
         <div className="border-t border-border bg-card px-4 py-3 md:hidden">
           <div className="flex flex-col gap-2">
             <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
-              <Link to="/">İlanlar</Link>
+              <Link to="/pazar">İlanlar</Link>
             </Button>
             <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
               <Link to="/kesfet">

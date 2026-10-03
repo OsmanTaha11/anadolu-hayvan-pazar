@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Clapperboard, Home, PlusSquare, User, UserPlus } from "lucide-react";
+import { Clapperboard, Home, PlusSquare, Store, User, UserPlus } from "lucide-react";
 
 import { useSession } from "@/hooks/use-session";
 import { cn } from "@/lib/utils";
@@ -26,10 +26,11 @@ export function BottomNav() {
     { to: "/kesfet", label: "Reels", icon: Clapperboard },
     user
       ? { to: "/satici", label: "İlan Ver", icon: PlusSquare }
-      : { to: "/giris", label: "Kayıt Ol", icon: UserPlus },
+      : { to: "/giris", label: "İlan Ver", icon: PlusSquare },
+    { to: "/pazar", label: "Pazar", icon: Store },
     user
       ? { to: panel, label: "Profil", icon: User }
-      : { to: "/giris", label: "Giriş", icon: User },
+      : { to: "/giris", label: "Giriş", icon: UserPlus },
   ] as const;
 
   if (!mounted) return null;
