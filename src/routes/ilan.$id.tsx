@@ -45,7 +45,7 @@ export const Route = createFileRoute("/ilan/$id")({
 
 function ListingDetail() {
   const { id } = Route.useParams();
-  const { user } = useSession();
+  const { user, role } = useSession();
   const navigate = useNavigate();
   const [active, setActive] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -75,6 +75,14 @@ function ListingDetail() {
       return;
     }
     if (!listing) return;
+    if (role === "vet") {
+      toast.error("Veteriner hesapları alım-satım yapamaz. Lütfen ayrı bir alıcı/satıcı hesabı kullanın.");
+      return;
+    }
+    if (listing.seller_id === user.id) {
+      toast.error("Kendi ilanınızı satın alamazsınız.");
+      return;
+    }
     setSubmitting(true);
     const deposit = Math.round(Number(listing.total_price) * 0.1);
     const { error } = await supabase.from("escrow_orders").insert({
