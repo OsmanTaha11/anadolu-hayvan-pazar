@@ -24,9 +24,13 @@ export function BottomNav() {
   const items = [
     { to: "/", label: "Ana Sayfa", icon: Home },
     { to: "/kesfet", label: "Reels", icon: Clapperboard },
-    user
-      ? { to: "/satici", label: "İlan Ver", icon: PlusSquare }
-      : { to: "/giris", label: "İlan Ver", icon: PlusSquare },
+    !user
+      ? { to: "/giris", label: "İlan Ver", icon: PlusSquare }
+      : role === "vet"
+        ? { to: "/veteriner", label: "Ekspertiz", icon: PlusSquare }
+        : role === "seller"
+          ? { to: "/siparislerim", label: "Alımlarım", icon: PlusSquare }
+          : { to: "/satici", label: "İlan Ver", icon: PlusSquare },
     { to: "/pazar", label: "Pazar", icon: Store },
     user
       ? { to: panel, label: "Profil", icon: User }
