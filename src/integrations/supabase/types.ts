@@ -145,6 +145,7 @@ export type Database = {
           id: string
           is_verified: boolean
           phone_number: string | null
+          service_cities: string[]
         }
         Insert: {
           city?: string | null
@@ -154,6 +155,7 @@ export type Database = {
           id: string
           is_verified?: boolean
           phone_number?: string | null
+          service_cities?: string[]
         }
         Update: {
           city?: string | null
@@ -163,6 +165,7 @@ export type Database = {
           id?: string
           is_verified?: boolean
           phone_number?: string | null
+          service_cities?: string[]
         }
         Relationships: []
       }

@@ -16,12 +16,10 @@ export function SiteHeader() {
 
   const panelLink =
     role === "vet"
-      ? { to: "/veteriner", label: "Saha Paneli" }
-      : role === "seller"
-        ? { to: "/satici", label: "Satıcı Paneli" }
-        : role === "admin"
-          ? { to: "/yonetim", label: "Yönetim" }
-          : { to: "/siparislerim", label: "Siparişlerim" };
+      ? { to: "/veteriner", label: "Ekspertiz Paneli" }
+      : role === "admin"
+        ? { to: "/yonetim", label: "Yönetim" }
+        : { to: "/satici", label: "Satış Panelim" };
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();
@@ -41,19 +39,28 @@ export function SiteHeader() {
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
-          <Button variant="ghost" asChild>
-            <Link to="/pazar">İlanlar</Link>
-          </Button>
-          <Button variant="ghost" asChild>
-            <Link to="/kesfet">
-              <Clapperboard className="size-4" aria-hidden /> Keşfet (Reels)
-            </Link>
-          </Button>
+          {role !== "vet" ? (
+            <>
+              <Button variant="ghost" asChild>
+                <Link to="/pazar">İlanlar</Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link to="/kesfet">
+                  <Clapperboard className="size-4" aria-hidden /> Keşfet (Reels)
+                </Link>
+              </Button>
+            </>
+          ) : null}
           {user ? (
             <>
               <Button variant="ghost" asChild>
                 <Link to={panelLink.to}>{panelLink.label}</Link>
               </Button>
+              {role !== "vet" && role !== "admin" ? (
+                <Button variant="ghost" asChild>
+                  <Link to="/siparislerim">Alımlarım</Link>
+                </Button>
+              ) : null}
               <span className="ml-2 text-sm text-muted-foreground">
                 {fullName || user.email} · {role ? ROLE_LABELS[role] : ""}
               </span>
@@ -82,14 +89,18 @@ export function SiteHeader() {
       {open ? (
         <div className="border-t border-border bg-card px-4 py-3 md:hidden">
           <div className="flex flex-col gap-2">
-            <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
-              <Link to="/pazar">İlanlar</Link>
-            </Button>
-            <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
-              <Link to="/kesfet">
-                <Clapperboard className="size-4" aria-hidden /> Keşfet (Reels)
-              </Link>
-            </Button>
+            {role !== "vet" ? (
+              <>
+                <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
+                  <Link to="/pazar">İlanlar</Link>
+                </Button>
+                <Button variant="ghost" className="justify-start" asChild onClick={() => setOpen(false)}>
+                  <Link to="/kesfet">
+                    <Clapperboard className="size-4" aria-hidden /> Keşfet (Reels)
+                  </Link>
+                </Button>
+              </>
+            ) : null}
             {user ? (
               <>
                 <Button

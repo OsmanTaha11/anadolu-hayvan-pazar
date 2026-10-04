@@ -218,7 +218,7 @@ function SellerPage() {
           rozeti alır.
         </p>
 
-        {role !== "seller" ? (
+        {role === "vet" || role === "admin" ? (
           <p className="mt-4 rounded-lg border border-border bg-muted p-3 text-sm">
             Hesabınız üretici/satıcı olarak tanımlı değil. İlan yayınlamak için satıcı hesabıyla
             giriş yapın.

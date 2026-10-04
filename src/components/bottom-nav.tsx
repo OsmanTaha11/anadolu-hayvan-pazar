@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Clapperboard, Home, PlusSquare, Store, User, UserPlus } from "lucide-react";
 
@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 
 export function BottomNav() {
   const { user, role } = useSession();
+  const navigate = useNavigate();
   const routerPath = useRouterState({ select: (s) => s.location.pathname });
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -17,27 +18,28 @@ export function BottomNav() {
       ? "/veteriner"
       : role === "admin"
         ? "/yonetim"
-        : role === "seller"
-          ? "/satici"
-          : "/siparislerim";
+        : "/siparislerim";
 
   const items = [
     { to: "/", label: "Ana Sayfa", icon: Home },
     { to: "/kesfet", label: "Reels", icon: Clapperboard },
-    !user
-      ? { to: "/giris", label: "İlan Ver", icon: PlusSquare }
-      : role === "vet"
-        ? { to: "/veteriner", label: "Ekspertiz", icon: PlusSquare }
-        : role === "seller"
-          ? { to: "/siparislerim", label: "Alımlarım", icon: PlusSquare }
-          : { to: "/satici", label: "İlan Ver", icon: PlusSquare },
+    user
+      ? { to: "/satici", label: "İlan Ver", icon: PlusSquare }
+      : { to: "/giris", label: "İlan Ver", icon: PlusSquare },
     { to: "/pazar", label: "Pazar", icon: Store },
     user
       ? { to: panel, label: "Profil", icon: User }
       : { to: "/giris", label: "Giriş", icon: UserPlus },
   ] as const;
 
+  useEffect(() => {
+    if (mounted && role === "vet" && !pathname.startsWith("/veteriner")) {
+      navigate({ to: "/veteriner", replace: true });
+    }
+  }, [mounted, role, pathname, navigate]);
+
   if (!mounted) return null;
+  if (role === "vet") return null;
 
   const onReels = pathname.startsWith("/kesfet");
 
