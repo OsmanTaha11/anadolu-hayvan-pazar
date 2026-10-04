@@ -29,6 +29,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
 import { LISTING_MEDIA_BUCKET, STORAGE_PREFIX } from "@/lib/media";
 import {
+  CITIES,
   STATUS_LABELS,
   ageLabel,
   formatDate,
@@ -124,9 +125,44 @@ function VetPage() {
     return map;
   }, [inspections]);
 
+  const { data: serviceCities } = useQuery({
+    queryKey: ["vet-regions", user?.id],
+    enabled: Boolean(user?.id) && role === "vet",
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("service_cities")
+        .eq("id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return (data?.service_cities ?? []) as string[];
+    },
+  });
+  const regions = serviceCities ?? [];
+  const [editingRegions, setEditingRegions] = useState(false);
+
+  const toggleRegion = async (city: string) => {
+    if (!user) return;
+    const next = regions.includes(city) ? regions.filter((c) => c !== city) : [...regions, city];
+    const { error } = await supabase
+      .from("profiles")
+      .update({ service_cities: next })
+      .eq("id", user.id);
+    if (error) {
+      toast.error("Çalışma bölgesi kaydedilemedi: " + error.message);
+      return;
+    }
+    queryClient.setQueryData(["vet-regions", user.id], next);
+  };
+
   const tasks = useMemo(
-    () => (listings ?? []).filter((l) => !reportByListing.get(l.id)?.is_approved),
-    [listings, reportByListing],
+    () =>
+      (listings ?? []).filter(
+        (l) =>
+          !reportByListing.get(l.id)?.is_approved &&
+          (regions.length === 0 || regions.includes(l.city)),
+      ),
+    [listings, reportByListing, regions],
   );
 
   const openForm = (listing: Listing) => {
@@ -264,6 +300,41 @@ function VetPage() {
             <BadgeCheck className="size-4" aria-hidden /> Raporlarım ({(inspections ?? []).length})
           </Button>
         </div>
+
+        <section className="mt-6 rounded-xl border border-border bg-card p-4">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <MapPin className="size-4 text-primary" aria-hidden />
+              <h2 className="font-display text-base font-bold">Çalışma Bölgem</h2>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setEditingRegions((v) => !v)}>
+              {editingRegions ? "Tamam" : "Bölgeleri Düzenle"}
+            </Button>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {regions.length === 0
+              ? "Henüz bölge seçmediniz — tüm şehirlerdeki görevler gösteriliyor."
+              : `Görev listesi yalnızca bu şehirlerdeki hayvanları gösterir: ${regions.join(", ")}`}
+          </p>
+          {editingRegions ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {CITIES.map((c) => {
+                const on = regions.includes(c);
+                return (
+                  <Button
+                    key={c}
+                    type="button"
+                    size="sm"
+                    variant={on ? "default" : "outline"}
+                    onClick={() => void toggleRegion(c)}
+                  >
+                    {c}
+                  </Button>
+                );
+              })}
+            </div>
+          ) : null}
+        </section>
 
         {activeListing ? (
           <form
