@@ -15,6 +15,13 @@
       "when": 1791063541665,
       "tag": "0001_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791127547402,
+      "tag": "0002_escrow_buyer_rules",
+      "breakpoints": true
     }
   ]
 }
