@@ -56,7 +56,7 @@ function AuthPage() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("Konya");
-  const [role, setRole] = useState("buyer");
+  const [role, setRole] = useState("seller");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -224,7 +224,7 @@ function AuthPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {["buyer", "seller", "vet"].map((r) => (
+                      {["seller", "vet"].map((r) => (
                         <SelectItem key={r} value={r}>
                           {ROLE_LABELS[r]}
                         </SelectItem>

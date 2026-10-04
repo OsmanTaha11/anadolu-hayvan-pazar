@@ -17,11 +17,9 @@ export function SiteHeader() {
   const panelLink =
     role === "vet"
       ? { to: "/veteriner", label: "Saha Paneli" }
-      : role === "seller"
-        ? { to: "/satici", label: "Satıcı Paneli" }
-        : role === "admin"
-          ? { to: "/yonetim", label: "Yönetim" }
-          : { to: "/siparislerim", label: "Siparişlerim" };
+      : role === "admin"
+        ? { to: "/yonetim", label: "Yönetim" }
+        : { to: "/satici", label: "Satış Panelim" };
 
   const handleSignOut = async () => {
     await queryClient.cancelQueries();

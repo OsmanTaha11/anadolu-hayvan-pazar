@@ -48,8 +48,8 @@ export const ESCROW_LABELS: Record<string, string> = {
 };
 
 export const ROLE_LABELS: Record<string, string> = {
-  buyer: "Alıcı",
-  seller: "Üretici (Alım + Satım)",
+  buyer: "Alıcı / Satıcı",
+  seller: "Alıcı / Satıcı",
   vet: "Veteriner Hekim",
   admin: "Yönetici",
 };
