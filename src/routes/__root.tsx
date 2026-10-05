@@ -106,6 +106,11 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var h=location.hash||"";var s=location.search||"";if((h.indexOf("type=recovery")>-1||s.indexOf("type=recovery")>-1)&&location.pathname!=="/reset-password"){location.replace("/reset-password"+s+h);}}catch(e){}})();`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>
