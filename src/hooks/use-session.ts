@@ -34,7 +34,15 @@ export function useSession() {
 
     supabase.auth.getSession().then(({ data }) => load(data.session?.user ?? null));
 
+    if (typeof window !== "undefined" && window.location.hash.includes("type=recovery") && window.location.pathname !== "/reset-password") {
+      window.location.replace("/reset-password" + window.location.hash);
+    }
+
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY" && window.location.pathname !== "/reset-password") {
+        window.location.replace("/reset-password");
+        return;
+      }
       if (event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") return;
       void load(session?.user ?? null);
     });
