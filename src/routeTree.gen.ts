@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as GirisRouteImport } from './routes/giris'
 import { Route as KesfetRouteImport } from './routes/kesfet'
 import { Route as PazarRouteImport } from './routes/pazar'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedSaticiRouteImport } from './routes/_authenticated/satici'
 import { Route as AuthenticatedSiparislerimRouteImport } from './routes/_authenticated/siparislerim'
 import { Route as AuthenticatedVeterinerRouteImport } from './routes/_authenticated/veteriner'
@@ -42,6 +43,11 @@ const KesfetRoute = KesfetRouteImport.update({
 const PazarRoute = PazarRouteImport.update({
   id: '/pazar',
   path: '/pazar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedSaticiRoute = AuthenticatedSaticiRouteImport.update({
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/giris': typeof GirisRoute
   '/kesfet': typeof KesfetRoute
   '/pazar': typeof PazarRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/satici': typeof AuthenticatedSaticiRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/veteriner': typeof AuthenticatedVeterinerRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/giris': typeof GirisRoute
   '/kesfet': typeof KesfetRoute
   '/pazar': typeof PazarRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/satici': typeof AuthenticatedSaticiRoute
   '/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/veteriner': typeof AuthenticatedVeterinerRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/giris': typeof GirisRoute
   '/kesfet': typeof KesfetRoute
   '/pazar': typeof PazarRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/satici': typeof AuthenticatedSaticiRoute
   '/_authenticated/siparislerim': typeof AuthenticatedSiparislerimRoute
   '/_authenticated/veteriner': typeof AuthenticatedVeterinerRoute
@@ -113,6 +122,7 @@ export interface FileRouteTypes {
     | '/giris'
     | '/kesfet'
     | '/pazar'
+    | '/reset-password'
     | '/satici'
     | '/siparislerim'
     | '/veteriner'
@@ -124,6 +134,7 @@ export interface FileRouteTypes {
     | '/giris'
     | '/kesfet'
     | '/pazar'
+    | '/reset-password'
     | '/satici'
     | '/siparislerim'
     | '/veteriner'
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/giris'
     | '/kesfet'
     | '/pazar'
+    | '/reset-password'
     | '/_authenticated/satici'
     | '/_authenticated/siparislerim'
     | '/_authenticated/veteriner'
@@ -149,6 +161,7 @@ export interface RootRouteChildren {
   GirisRoute: typeof GirisRoute
   KesfetRoute: typeof KesfetRoute
   PazarRoute: typeof PazarRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   IlanIdRoute: typeof IlanIdRoute
 }
 
@@ -187,6 +200,13 @@ declare module '@tanstack/react-router' {
       path: '/pazar'
       fullPath: '/pazar'
       preLoaderRoute: typeof PazarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/satici': {
@@ -250,6 +270,7 @@ const rootRouteChildren: RootRouteChildren = {
   GirisRoute: GirisRoute,
   KesfetRoute: KesfetRoute,
   PazarRoute: PazarRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   IlanIdRoute: IlanIdRoute,
 }
 export const routeTree = rootRouteImport

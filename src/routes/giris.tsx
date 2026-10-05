@@ -70,11 +70,34 @@ function AuthPage() {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
     if (error) {
-      toast.error("Giriş başarısız: " + error.message);
+      const msg = /invalid login/i.test(error.message)
+        ? "E-posta veya şifre hatalı. Şifrenizi unuttuysanız aşağıdan sıfırlayabilirsiniz."
+        : /not confirmed/i.test(error.message)
+          ? "E-postanızı henüz onaylamadınız. Gelen kutunuzdaki bağlantıya tıklayın."
+          : error.message;
+      toast.error("Giriş başarısız: " + msg);
       return;
     }
     toast.success("Hoş geldiniz!");
     navigate({ to: "/", replace: true });
+  };
+
+  const forgot = async () => {
+    const target = email.trim();
+    if (!target) {
+      toast.error("Önce e-posta adresinizi yazın.");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(target, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    setLoading(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Şifre sıfırlama bağlantısı e-postanıza gönderildi.");
   };
 
   const signUp = async (e: React.FormEvent) => {
@@ -85,7 +108,7 @@ function AuthPage() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
@@ -103,7 +126,15 @@ function AuthPage() {
       toast.error("Kayıt başarısız: " + error.message);
       return;
     }
-    toast.success("Kayıt tamamlandı. Giriş yapabilirsiniz.");
+    if (data.user && (data.user.identities?.length ?? 0) === 0) {
+      toast.error("Bu e-posta ile zaten bir hesap var. Giriş yapın veya şifrenizi sıfırlayın.");
+      return;
+    }
+    if (!data.session) {
+      toast.success("Kayıt alındı! E-postanıza gelen onay bağlantısına tıklayıp sonra giriş yapın.", { duration: 8000 });
+      return;
+    }
+    toast.success("Kayıt tamamlandı.");
     navigate({ to: "/", replace: true });
   };
 
@@ -151,6 +182,14 @@ function AuthPage() {
               <Button type="submit" size="lg" className="w-full" disabled={loading}>
                 Giriş Yap
               </Button>
+              <button
+                type="button"
+                onClick={forgot}
+                disabled={loading}
+                className="w-full text-center text-sm text-muted-foreground underline"
+              >
+                Şifremi unuttum
+              </button>
             </form>
           </TabsContent>
 
