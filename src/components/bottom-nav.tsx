@@ -33,7 +33,8 @@ export function BottomNav() {
   ] as const;
 
   useEffect(() => {
-    if (mounted && role === "vet" && !pathname.startsWith("/veteriner")) {
+    const vetAllowed = ["/veteriner", "/reset-password", "/giris"];
+    if (mounted && role === "vet" && !vetAllowed.some((p) => pathname.startsWith(p))) {
       navigate({ to: "/veteriner", replace: true });
     }
   }, [mounted, role, pathname, navigate]);
