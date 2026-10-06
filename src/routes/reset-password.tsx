@@ -34,10 +34,24 @@ function ResetPage() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.updateUser({ password });
+    let error: { message: string } | null = null;
+    try {
+      const res = await Promise.race([
+        supabase.auth.updateUser({ password }),
+        new Promise<never>((_, rej) => setTimeout(() => rej(new Error("timeout")), 15000)),
+      ]);
+      error = res.error;
+    } catch {
+      error = { message: "Bağlantı zaman aşımına uğradı. Sayfayı yenileyip tekrar deneyin." };
+    }
     setLoading(false);
     if (error) {
-      toast.error("Şifre güncellenemedi: " + error.message);
+      const msg = /different from the old/i.test(error.message)
+        ? "Yeni şifre eski şifrenizle aynı olamaz."
+        : /session|jwt|expired/i.test(error.message)
+          ? "Bağlantının süresi dolmuş. Lütfen yeniden 'Şifremi unuttum' deyin."
+          : error.message;
+      toast.error("Şifre güncellenemedi: " + msg);
       return;
     }
     toast.success("Şifreniz güncellendi.");
@@ -53,7 +67,7 @@ function ResetPage() {
           <Input id="np" type="password" className="mt-1 h-11" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
         <Button type="submit" size="lg" className="w-full" disabled={loading}>
-          Şifreyi Kaydet
+          {loading ? "Kaydediliyor..." : "Şifreyi Kaydet"}
         </Button>
       </form>
     </div>

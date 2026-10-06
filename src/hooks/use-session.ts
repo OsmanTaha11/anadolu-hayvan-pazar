@@ -44,7 +44,8 @@ export function useSession() {
         return;
       }
       if (event === "TOKEN_REFRESHED" || event === "INITIAL_SESSION") return;
-      void load(session?.user ?? null);
+      // Defer to avoid auth-lock deadlock (e.g. updateUser hanging)
+      setTimeout(() => void load(session?.user ?? null), 0);
     });
 
     return () => {
