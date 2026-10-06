@@ -29,6 +29,13 @@
       "when": 1791127795415,
       "tag": "0003_unified_trader_role_vet_regions",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791302836029,
+      "tag": "0004_dual_roles",
+      "breakpoints": true
     }
   ]
 }
