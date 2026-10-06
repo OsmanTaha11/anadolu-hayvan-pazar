@@ -127,7 +127,7 @@ function AuthPage() {
       return;
     }
     if (data.user && (data.user.identities?.length ?? 0) === 0) {
-      toast.error("Bu e-posta ile zaten bir hesap var. Giriş yapın veya şifrenizi sıfırlayın.");
+      toast.error("Bu e-posta ile zaten bir hesap var. Giriş yapıp menüden \"Veteriner / Alım-Satım Hesabı Ekle\" ile diğer hesap türünü ekleyebilirsiniz.", { duration: 9000 });
       return;
     }
     if (!data.session) {

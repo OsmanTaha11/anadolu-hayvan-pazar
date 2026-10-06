@@ -4,9 +4,34 @@ import { supabase } from "@/integrations/supabase/client";
 
 export type AppRole = "buyer" | "seller" | "vet" | "admin";
 
+const MODE_KEY = "cp_active_mode";
+
+function pickRole(roles: AppRole[]): AppRole {
+  if (roles.includes("admin")) return "admin";
+  const hasVet = roles.includes("vet");
+  const hasTrader = roles.includes("seller") || roles.includes("buyer");
+  if (hasVet && hasTrader) {
+    const saved = typeof window !== "undefined" ? window.localStorage.getItem(MODE_KEY) : null;
+    return saved === "vet" ? "vet" : "seller";
+  }
+  if (hasVet) return "vet";
+  return "seller";
+}
+
+/** Switch between vet and trader mode for accounts that have both. */
+export async function switchMode(mode: "vet" | "seller", addIfMissing = false) {
+  if (addIfMissing) {
+    const { error } = await supabase.rpc("add_my_role", { _role: mode });
+    if (error) throw error;
+  }
+  window.localStorage.setItem(MODE_KEY, mode);
+  window.location.href = mode === "vet" ? "/veteriner" : "/";
+}
+
 export function useSession() {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<AppRole | null>(null);
+  const [roles, setRoles] = useState<AppRole[]>([]);
   const [fullName, setFullName] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
@@ -18,16 +43,19 @@ export function useSession() {
       setUser(nextUser);
       if (!nextUser) {
         setRole(null);
+        setRoles([]);
         setFullName("");
         setLoading(false);
         return;
       }
-      const [{ data: roleRow }, { data: profile }] = await Promise.all([
-        supabase.from("user_roles").select("role").eq("user_id", nextUser.id).maybeSingle(),
+      const [{ data: roleRows }, { data: profile }] = await Promise.all([
+        supabase.from("user_roles").select("role").eq("user_id", nextUser.id),
         supabase.from("profiles").select("full_name").eq("id", nextUser.id).maybeSingle(),
       ]);
       if (!active) return;
-      setRole(((roleRow?.role as AppRole | undefined) ?? "buyer") as AppRole);
+      const list = ((roleRows ?? []).map((r) => r.role) as AppRole[]) || [];
+      setRoles(list);
+      setRole(pickRole(list));
       setFullName(profile?.full_name ?? "");
       setLoading(false);
     };
@@ -54,5 +82,8 @@ export function useSession() {
     };
   }, []);
 
-  return { user, role, fullName, loading };
+  const hasVet = roles.includes("vet");
+  const hasTrader = roles.includes("seller") || roles.includes("buyer");
+
+  return { user, role, roles, hasVet, hasTrader, fullName, loading };
 }

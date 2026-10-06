@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
 import { ROLE_LABELS } from "@/lib/marketplace";
+import { ModeSwitch } from "@/components/mode-switch";
 
 export function SiteHeader() {
   const { user, role, fullName } = useSession();
@@ -61,6 +62,7 @@ export function SiteHeader() {
                   <Link to="/siparislerim">Alımlarım</Link>
                 </Button>
               ) : null}
+              <ModeSwitch />
               <span className="ml-2 text-sm text-muted-foreground">
                 {fullName || user.email} · {role ? ROLE_LABELS[role] : ""}
               </span>
@@ -111,6 +113,7 @@ export function SiteHeader() {
                 >
                   <Link to={panelLink.to}>{panelLink.label}</Link>
                 </Button>
+                <ModeSwitch className="justify-start" />
                 <Button variant="outline" onClick={handleSignOut}>
                   Çıkış Yap
                 </Button>
