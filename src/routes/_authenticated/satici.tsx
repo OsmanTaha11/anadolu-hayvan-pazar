@@ -58,7 +58,7 @@ export const Route = createFileRoute("/_authenticated/satici")({
 });
 
 function SellerPage() {
-  const { user, role } = useSession();
+  const { user, role, hasTrader } = useSession();
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
   const [video, setVideo] = useState<File | null>(null);
@@ -156,6 +156,10 @@ function SellerPage() {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    if (!hasTrader) {
+      toast.error("Bu hesapta alım-satım hesabı yok. Üst menüden \"Alım-Satım Hesabı Ekle\"ye basın.");
+      return;
+    }
     if (!form.title || !form.ear_tag_number || !form.price_per_head) {
       toast.error("Başlık, küpe numarası ve fiyat zorunludur.");
       return;
