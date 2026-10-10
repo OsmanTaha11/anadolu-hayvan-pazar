@@ -7,25 +7,27 @@ export type AppRole = "buyer" | "seller" | "vet" | "admin";
 const MODE_KEY = "cp_active_mode";
 
 function pickRole(roles: AppRole[]): AppRole {
-  if (roles.includes("admin")) return "admin";
+  const saved = typeof window !== "undefined" ? window.localStorage.getItem(MODE_KEY) : null;
   const hasVet = roles.includes("vet");
   const hasTrader = roles.includes("seller") || roles.includes("buyer");
-  if (hasVet && hasTrader) {
-    const saved = typeof window !== "undefined" ? window.localStorage.getItem(MODE_KEY) : null;
-    return saved === "vet" ? "vet" : "seller";
+  if (roles.includes("admin")) {
+    if (saved === "vet" && hasVet) return "vet";
+    if (saved === "seller" && hasTrader) return "seller";
+    return "admin";
   }
+  if (hasVet && hasTrader) return saved === "vet" ? "vet" : "seller";
   if (hasVet) return "vet";
   return "seller";
 }
 
-/** Switch between vet and trader mode for accounts that have both. */
-export async function switchMode(mode: "vet" | "seller", addIfMissing = false) {
-  if (addIfMissing) {
+/** Switch between modes for accounts that have several roles. */
+export async function switchMode(mode: "vet" | "seller" | "admin", addIfMissing = false) {
+  if (addIfMissing && mode !== "admin") {
     const { error } = await supabase.rpc("add_my_role", { _role: mode });
     if (error) throw error;
   }
   window.localStorage.setItem(MODE_KEY, mode);
-  window.location.href = mode === "vet" ? "/veteriner" : "/";
+  window.location.href = mode === "vet" ? "/veteriner" : mode === "admin" ? "/yonetim" : "/";
 }
 
 export function useSession() {

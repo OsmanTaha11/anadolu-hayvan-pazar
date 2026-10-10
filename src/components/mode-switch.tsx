@@ -4,9 +4,33 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { switchMode, useSession } from "@/hooks/use-session";
 
+type Mode = "vet" | "seller" | "admin";
+const LABELS: Record<Mode, string> = {
+  vet: "Veteriner Modu",
+  seller: "Alım-Satım Modu",
+  admin: "Yönetici Modu",
+};
+
 export function ModeSwitch({ className }: { className?: string }) {
-  const { user, role, hasVet, hasTrader } = useSession();
-  if (!user || role === "admin") return null;
+  const { user, role, roles, hasVet, hasTrader } = useSession();
+  if (!user || !role) return null;
+
+  const isAdmin = roles.includes("admin");
+  if (isAdmin) {
+    const modes = (["admin", "seller", "vet"] as Mode[]).filter(
+      (m) => m !== role && (m === "admin" || (m === "vet" ? hasVet : hasTrader)),
+    );
+    if (modes.length === 0) return null;
+    return (
+      <>
+        {modes.map((m) => (
+          <Button key={m} variant="outline" size="sm" className={className} onClick={() => void switchMode(m)}>
+            <ArrowLeftRight className="size-4" aria-hidden /> {LABELS[m]}
+          </Button>
+        ))}
+      </>
+    );
+  }
 
   const target: "vet" | "seller" = role === "vet" ? "seller" : "vet";
   const has = target === "vet" ? hasVet : hasTrader;
